@@ -10,15 +10,19 @@ from gmr import GMM, kmeansplusplus_initialization, covariance_initialization
 from gmr.utils import check_random_state
 import os
 from statistics import variance
+import glob
 
 #my_file = open("linear/train/train.txt", "r")
 data = []
-_dir = os.path.dirname(__file__)
-_dir = _dir.split("/")[:-1]
-_dir = "/".join(_dir)
-_path = os.path.join(_dir, 'linear', 'train')
-all_files = os.listdir(_path)
-all_files = [os.path.join(_path, _path2) for _path2 in all_files]
+# _dir = os.path.dirname(__file__)
+# _dir = _dir.split("/")[:-1]
+# _dir = "/".join(_dir)
+# _path = os.path.join(_dir, 'linear_char')
+# all_files = os.listdir(_path)
+# all_files = [os.path.join(_path, _path2) for _path2 in all_files]
+all_files = glob.glob("linear_char/train.txt")
+train_trajectory = []
+trajectory1 = []
 print(all_files)
 for path in all_files:
     with open(path, "r") as f:
@@ -26,21 +30,21 @@ for path in all_files:
     #with open("real/train/train.txt", "r") as f:
         for line in f:
             line = line.strip().split('\t')
-            line = [float(i) for i in line]
-            data.append(line)
-trajectory1 = []
-for j in range(3000):
-    trajectory = []
-    for i in range(20):
-        trajectory.append(data[j * 20 + i][2])
-        trajectory.append(data[j * 20 + i][3])
-        trajectory.append(data[j * 20 + i][4])
-    trajectory1.append(trajectory)
-trajectory1 = np.array(trajectory1)
+            if(line[0] == "new"):
+                if len(trajectory1) == 20:
+                    train_trajectory.append(trajectory1)
+                trajectory1 = []
+                line = [float(i) for i in line[2:]]
+                trajectory1.append(line)
+            else:
+                line = [float(i) for i in line[2:]]
+                trajectory1.append(line)
+
+print(train_trajectory)
 
 
 
-X_train= trajectory1[0:3000]
+X_train= np.array(train_trajectory)
 
 random_state = check_random_state(0)
 n_components = 20
@@ -57,12 +61,7 @@ gmm = GMM(
 #with open("linear/vis/vis.txt", "r") as f:
 #with open("vertical/vis/vis.txt", "r") as f:
 data = []
-_dir = os.path.dirname(__file__)
-_dir = _dir.split("/")[:-1]
-_dir = "/".join(_dir)
-_path = os.path.join(_dir, 'linear', 'vis')
-all_files = os.listdir(_path)
-all_files = [os.path.join(_path, _path2) for _path2 in all_files]
+all_files = glob.glob("linear_char/testdisrupt*.txt")
 print(all_files)
 for path in all_files:
     with open(path, "r") as f:
@@ -70,7 +69,7 @@ for path in all_files:
     #with open("real/train/train.txt", "r") as f:
         for line in f:
             line = line.strip().split('\t')
-            line = [float(i) for i in line]
+            line = [float(i) for i in line[1:]]
             data.append(line)
 #with open("real/vis/vis.txt", "r") as f:
     # for line in f:
