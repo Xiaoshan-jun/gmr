@@ -40,12 +40,10 @@ for path in all_files:
                 line = [float(i) for i in line[2:]]
                 trajectory1.append(line)
 
-print(train_trajectory)
-
-
 
 X_train= np.array(train_trajectory)
-
+old_shape = X_train.shape
+X_train = X_train.reshape(old_shape[0],old_shape[1] * old_shape[2])
 random_state = check_random_state(0)
 n_components = 20
 initial_means = kmeansplusplus_initialization(X_train, n_components, random_state)
@@ -62,6 +60,8 @@ gmm = GMM(
 #with open("vertical/vis/vis.txt", "r") as f:
 data = []
 all_files = glob.glob("linear_char/testdisrupt*.txt")
+train_trajectory = []
+trajectory1 = []
 print(all_files)
 for path in all_files:
     with open(path, "r") as f:
@@ -69,36 +69,34 @@ for path in all_files:
     #with open("real/train/train.txt", "r") as f:
         for line in f:
             line = line.strip().split('\t')
-            line = [float(i) for i in line[1:]]
-            data.append(line)
-#with open("real/vis/vis.txt", "r") as f:
-    # for line in f:
-    #     line = line.strip().split('\t')
-    #     line = [float(i) for i in line]
-    #     data.append(line)
-trajectory1 = []
-for j in range(100):
-    trajectory = []
-    for i in range(20):
-        trajectory.append(data[j * 20 + i][2])
-        trajectory.append(data[j * 20 + i][3])
-        trajectory.append(data[j * 20 + i][4])
-    trajectory1.append(trajectory)
-trajectory1 = np.array(trajectory1)
+            if(line[0] == "new"):
+                if len(trajectory1) == 20:
+                    train_trajectory.append(trajectory1)
+                trajectory1 = []
+                line = [float(i) for i in line[2:]]
+                trajectory1.append(line)
+            else:
+                line = [float(i) for i in line[2:]]
+                trajectory1.append(line)
+
 dx = []
 dy = []
 dz = []
 p = []
+X_train= np.array(train_trajectory)
+old_shape = X_train.shape
+X_train = X_train.reshape(old_shape[0],old_shape[1] * old_shape[2])
+random_state = check_random_state(0)
 for i in range(100):
-    sample_observed=trajectory1[i][0:30]
+    sample_observed=X_train[i][0:30]
     
-    true_traj= trajectory1[i][30:60]
+    true_traj= X_train[i][30:60]
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     samples_prediction = conditional_gmm.sample(1)
     
     
-    gt = trajectory1[i][30:60]
+    gt = X_train[i][30:60]
     obs_trajp = sample_observed
     pred_traj_gtp = gt
     pred_traj_fake = samples_prediction
