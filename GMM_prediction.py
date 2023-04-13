@@ -12,15 +12,9 @@ import os
 from statistics import variance
 import glob
 
-#my_file = open("linear/train/train.txt", "r")
 data = []
-# _dir = os.path.dirname(__file__)
-# _dir = _dir.split("/")[:-1]
-# _dir = "/".join(_dir)
-# _path = os.path.join(_dir, 'linear_char')
-# all_files = os.listdir(_path)
-# all_files = [os.path.join(_path, _path2) for _path2 in all_files]
 all_files = glob.glob("linear_char/train.txt")
+#all_files = glob.glob("vertical_char/train.txt")
 train_trajectory = []
 trajectory1 = []
 print(all_files)
@@ -33,6 +27,10 @@ for path in all_files:
             if(line[0] == "new"):
                 if len(trajectory1) == 20:
                     train_trajectory.append(trajectory1)
+                # else:
+                #     for i in range(20-len(trajectory1)):
+                #         trajectory1.append([0, 0, 0])
+                #     train_trajectory.append(trajectory1)
                 trajectory1 = []
                 line = [float(i) for i in line[2:]]
                 trajectory1.append(line)
@@ -41,11 +39,11 @@ for path in all_files:
                 trajectory1.append(line)
 
 
-X_train= np.array(train_trajectory)
+X_train= np.array(train_trajectory[1:])
 old_shape = X_train.shape
 X_train = X_train.reshape(old_shape[0],old_shape[1] * old_shape[2])
 random_state = check_random_state(0)
-n_components = 20
+n_components = 200
 initial_means = kmeansplusplus_initialization(X_train, n_components, random_state)
 initial_covs = covariance_initialization(X_train, n_components)
 bgmm = BayesianGaussianMixture(n_components=n_components, max_iter=100).fit(X_train)
@@ -56,11 +54,12 @@ gmm = GMM(
     covariances=bgmm.covariances_,
     random_state=random_state)
 
-#with open("linear/vis/vis.txt", "r") as f:
-#with open("vertical/vis/vis.txt", "r") as f:
 data = []
-all_files = glob.glob("linear_char/testdisrupt*.txt")
-train_trajectory = []
+#all_files = glob.glob("linear_char/val/testgt*.txt")
+all_files = glob.glob("linear_char/val/testdisrupt*.txt")
+all_files = glob.glob("linear_char/val/testpointmusk*.txt")
+#all_files = glob.glob("vertical_char/val/testgt*.txt")
+test_trajectory = []
 trajectory1 = []
 print(all_files)
 for path in all_files:
@@ -71,7 +70,11 @@ for path in all_files:
             line = line.strip().split('\t')
             if(line[0] == "new"):
                 if len(trajectory1) == 20:
-                    train_trajectory.append(trajectory1)
+                    test_trajectory.append(trajectory1)
+                # else:
+                #     for i in range(20-len(trajectory1)):
+                #         trajectory1.append([0, 0, 0])
+                #     test_trajectory.append(trajectory1)
                 trajectory1 = []
                 line = [float(i) for i in line[2:]]
                 trajectory1.append(line)
@@ -83,20 +86,21 @@ dx = []
 dy = []
 dz = []
 p = []
-X_train= np.array(train_trajectory)
-old_shape = X_train.shape
-X_train = X_train.reshape(old_shape[0],old_shape[1] * old_shape[2])
+X_test= np.array(test_trajectory[1:])
+old_shape = X_test.shape
+X_test = X_test.reshape(old_shape[0],old_shape[1] * old_shape[2])
 random_state = check_random_state(0)
-for i in range(100):
-    sample_observed=X_train[i][0:30]
+miss = 0
+for i in range(len(X_test)):
+    sample_observed=X_test[i][0:30]
     
-    true_traj= X_train[i][30:60]
+    true_traj= X_test[i][30:60]
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     samples_prediction = conditional_gmm.sample(1)
     
     
-    gt = X_train[i][30:60]
+    gt = X_test[i][30:60]
     obs_trajp = sample_observed
     pred_traj_gtp = gt
     pred_traj_fake = samples_prediction
@@ -110,11 +114,13 @@ for i in range(100):
     
     diff = pred_traj_fake - pred_traj_gtp
     ade = []
-    for i in range(10):
-        dx.append(diff[i][0])
-        dy.append(diff[i][1])
-        dz.append(diff[i][2])
-        s = diff[i][0]**2 + diff[i][1]**2 + diff[i][2]**2
+    for j in range(10):
+        dx.append(diff[j][0])
+        dy.append(diff[j][1])
+        dz.append(diff[j][2])
+        if abs(diff[j][0]) > 20 or abs(diff[j][1]) > 20 or abs(diff[j][2]) > 7:
+            miss += 1
+        s = diff[j][0]**2 + diff[j][1]**2 + diff[j][2]**2
         ade.append(s**0.5)
     p.append(ade)
 
@@ -137,13 +143,18 @@ for i in range(100):
     # ax.plot(pred_traj_gtp.T[0],pred_traj_gtp.T[1], pred_traj_gtp.T[2],  c = 'orange')
     # ax.plot(pred_traj_fake.T[0],pred_traj_fake.T[1], pred_traj_fake.T[2],  c = 'blue')
     # ax.legend()
+print('number of test' + str(len(X_test)))
+allade = []
+allvarience = []
 for i in range(10):
     l = []
-    for k in range(100):
+    for k in range(len(X_test)):
         l.append(p[k][i])
     print(str(round(np.mean(l),2)) + '$\pm$' + str(round(variance(l)**0.5,2)))
-
-
+    allade.append(np.mean(l))
+    allvarience.append(round(variance(l)**0.5,2))
+print(str(round(np.mean(allade),2)) + '$\pm$' + str(round(np.mean(allvarience),2)))
+print(miss/(len(X_test)*10))
 
 # error=samples_prediction-true_traj
 
