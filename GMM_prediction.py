@@ -13,8 +13,10 @@ from statistics import variance
 import glob
 
 data = []
-all_files = glob.glob("linear_char/train.txt")
+#all_files = glob.glob("linear_char/train.txt")
 #all_files = glob.glob("vertical_char/train.txt")
+#all_files = glob.glob("trajectory_real/train.txt")
+all_files = glob.glob("trajectory_real/realdata2_train_smooth.txt")
 train_trajectory = []
 trajectory1 = []
 print(all_files)
@@ -56,9 +58,21 @@ gmm = GMM(
 
 data = []
 #all_files = glob.glob("linear_char/val/testgt*.txt")
-all_files = glob.glob("linear_char/val/testdisrupt*.txt")
-all_files = glob.glob("linear_char/val/testpointmusk*.txt")
+#all_files = glob.glob("linear_char/val/testdisrupt*.txt")
+#all_files = glob.glob("linear_char/val/testmusk*.txt")
+#all_files = glob.glob("linear_char/val/testpointmusk*.txt")
 #all_files = glob.glob("vertical_char/val/testgt*.txt")
+#all_files = glob.glob("vertical_char/val/testdisrupt*.txt")
+#all_files = glob.glob("vertical_char/val/testmusk*.txt")
+#all_files = glob.glob("vertical_char/val/testpointmusk*.txt")
+#all_files = glob.glob("trajectory_real/val/testgt*.txt")
+#all_files = glob.glob("trajectory_real/val/testdisrupt*.txt")
+#all_files = glob.glob("trajectory_real/val/testmusk*.txt")
+#all_files = glob.glob("trajectory_real/val/testpointmusk*.txt")
+#all_files = glob.glob("trajectory_real/val_smooth/testgt*.txt")
+#all_files = glob.glob("trajectory_real/val_smooth/testdisrupt*.txt")
+all_files = glob.glob("trajectory_real/val_smooth/testmusk*.txt")
+#all_files = glob.glob("trajectory_real/val_smooth/testpointmusk*.txt")
 test_trajectory = []
 trajectory1 = []
 print(all_files)
@@ -118,7 +132,7 @@ for i in range(len(X_test)):
         dx.append(diff[j][0])
         dy.append(diff[j][1])
         dz.append(diff[j][2])
-        if abs(diff[j][0]) > 20 or abs(diff[j][1]) > 20 or abs(diff[j][2]) > 7:
+        if abs(diff[j][0]) > 0.05 or abs(diff[j][1]) > 0.05 or abs(diff[j][2]) > 0.05:
             miss += 1
         s = diff[j][0]**2 + diff[j][1]**2 + diff[j][2]**2
         ade.append(s**0.5)
