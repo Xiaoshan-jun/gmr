@@ -43,9 +43,10 @@ for path in all_files:
 
 X_train= np.array(train_trajectory[1:])
 old_shape = X_train.shape
+print(old_shape)
 X_train = X_train.reshape(old_shape[0],old_shape[1] * old_shape[2])
 random_state = check_random_state(0)
-n_components = 200
+n_components = 100
 initial_means = kmeansplusplus_initialization(X_train, n_components, random_state)
 initial_covs = covariance_initialization(X_train, n_components)
 bgmm = BayesianGaussianMixture(n_components=n_components, max_iter=100).fit(X_train)
