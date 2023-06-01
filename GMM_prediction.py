@@ -16,17 +16,17 @@ import time
 #------------------------------------------------------TO DO-------------------------------
 #------------------------------------------------------training file and component --------
 #DATASET1 #train, keep same for each test file
-#all_files = glob.glob("dataset/trajectory_linear/train.txt") 
+# all_files = glob.glob("dataset/trajectory_linear/train.txt") 
 #all_files2 = glob.glob("dataset/trajectory_linear/val/testgt*.txt") 
 #all_files2 = glob.glob("dataset/trajectory_linear/val/testdisrupt*.txt")
-#all_files2 = glob.glob("dataset/trajectory_linear/val/testmusk*.txt")
+# all_files2 = glob.glob("dataset/trajectory_linear/val/testmusk*.txt")
 # all_files2 = glob.glob("dataset/trajectory_linear/val/testpointmusk*.txt")
 # xt = 25
 # yt = 25
 # zt = 9
 #DATASET2
-# all_files = glob.glob("dataset/trajectory_vertical/train.txt")
-# all_files2 = glob.glob("dataset/trajectory_vertical/val/testgt*.txt")
+#all_files = glob.glob("dataset/trajectory_vertical/train.txt")
+#all_files2 = glob.glob("dataset/trajectory_vertical/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_vertical/val/testdisrupt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_vertical/val/testmusk*.txt")
 #all_files2 = glob.glob("dataset/trajectory_vertical/val/testpointmusk*.txt")
@@ -34,38 +34,38 @@ import time
 # yt = 25
 # zt = 9
 #DATASET3
-# all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
-#all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testgt*.txt")
+#all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
+# all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testdisrupt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testmusk*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testpointmusk*.txt")
-# xt = 0.15
-# yt = 0.15
-# zt = 0.15
+xt = 0.15
+yt = 0.15
+zt = 0.15
 #DATASET4
-all_files = glob.glob("dataset/trajectory_linear_raylr/train.txt")
-all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testgt*.txt")
+# all_files = glob.glob("dataset/trajectory_linear_raylr/train.txt")
+#all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testdisrupt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testmusk*.txt")
-#all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testpointmusk*.txt")
+# all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testpointmusk*.txt")
 # xt = 25
 # yt = 25
 # zt = 9
 #DATASET5
 # all_files = glob.glob("dataset/trajectory_vertical_raylr/train.txt")
-# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testgt*.txt")
-#all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testdisrupt*.txt")
-#all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testmusk*.txt")
-#all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testpointmusk*.txt")
-xt = 25
-yt = 25
-zt = 9
+#all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testgt*.txt")
+# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testdisrupt*.txt")
+# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testmusk*.txt")
+# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testpointmusk*.txt")
+# xt = 25
+# yt = 25
+# zt = 9
 #DATASET6
-# all_files = glob.glob("dataset/trajectory_real_smooth_raylr/train.txt")
-# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testgt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testdisrupt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testmusk*.txt")
-# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testpointmusk*.txt")
+all_files = glob.glob("dataset/trajectory_real_smooth_raylr/train.txt")
+all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testgt*.txt")
+all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testdisrupt*.txt")
+all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testmusk*.txt")
+all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testpointmusk*.txt")
 # xt = 0.15
 # yt = 0.15
 # zt = 0.15
@@ -119,6 +119,7 @@ t0 = time.time()
 #all_files = glob.glob("trajectory_real/val_smooth/testpointmusk*.txt")
 test_trajectory = []
 trajectory1 = []
+#print(all_files2)
 for path in all_files2:
     with open(path, "r") as f:
     #with open("vertical/train/train.txt", "r") as f:

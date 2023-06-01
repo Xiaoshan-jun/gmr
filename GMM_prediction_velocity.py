@@ -86,8 +86,8 @@ all_files = glob.glob("trajectory_real/val/testgt*.txt")
 #all_files = glob.glob("trajectory_real/val_smooth/testgt*.txt")
 #all_files = glob.glob("trajectory_real/val_smooth/testdisrupt*.txt")
 #all_files = glob.glob("trajectory_real/val_smooth/testmusk*.txt")
-t0 = time.time()
 #all_files = glob.glob("trajectory_real/val_smooth/testpointmusk*.txt")
+t0 = time.time()
 test_trajectory = []
 trajectory1 = []
 for path in all_files:
