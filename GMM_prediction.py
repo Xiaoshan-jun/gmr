@@ -140,7 +140,7 @@ for path in all_files2:
                 line = [float(i) for i in line[1:]]
                 trajectory1.append(line)
 test_trajectory.append(trajectory1)
-
+X_train
 dx = []
 dy = []
 
