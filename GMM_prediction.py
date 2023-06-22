@@ -16,8 +16,8 @@ import time
 #------------------------------------------------------TO DO-------------------------------
 #------------------------------------------------------training file and component --------
 #DATASET1 #train, keep same for each test file
-# all_files = glob.glob("dataset/trajectory_linear/train.txt") 
-#all_files2 = glob.glob("dataset/trajectory_linear/val/testgt*.txt") 
+all_files = glob.glob("dataset/trajectory_linear/train.txt") 
+all_files2 = glob.glob("dataset/trajectory_linear/val/testgt*.txt") 
 #all_files2 = glob.glob("dataset/trajectory_linear/val/testdisrupt*.txt")
 # all_files2 = glob.glob("dataset/trajectory_linear/val/testmusk*.txt")
 # all_files2 = glob.glob("dataset/trajectory_linear/val/testpointmusk*.txt")
@@ -61,11 +61,11 @@ zt = 0.15
 # yt = 25
 # zt = 9
 #DATASET6
-all_files = glob.glob("dataset/trajectory_real_smooth_raylr/train.txt")
-all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testgt*.txt")
-all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testdisrupt*.txt")
-all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testmusk*.txt")
-all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testpointmusk*.txt")
+# all_files = glob.glob("dataset/trajectory_real_smooth_raylr/train.txt")
+# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testgt*.txt")
+# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testdisrupt*.txt")
+# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testmusk*.txt")
+# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testpointmusk*.txt")
 # xt = 0.15
 # yt = 0.15
 # zt = 0.15
@@ -152,39 +152,77 @@ old_shape = X_test.shape
 X_test = X_test.reshape(old_shape[0],old_shape[1] * old_shape[2])
 random_state = check_random_state(0)
 miss = 0
-for i in range(len(X_test)):
-    sample_observed=X_test[i][0:30]
+for i in range(1):
+    sample_observed=X_test[0][0:30]
     
-    true_traj= X_test[i][30:60]
+    true_traj= X_test[0][30:60]
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
-    samples_prediction = conditional_gmm.sample(1)
+    t0 = time.time()
+    samples_prediction = conditional_gmm.sample(1000)
+    print('generating time:')
+    gtime = time.time() - t0
+    print(gtime)
+    F1T0 = samples_prediction[:,0:3]
+    F1T1 = samples_prediction[:,3:6]
+    F1T2 = samples_prediction[:,6:9]
+    F1T3 = samples_prediction[:,9:12]
+    F1T4 = samples_prediction[:,12:15]
+    F1T5 = samples_prediction[:,15:18]
+    F1T6 = samples_prediction[:,18:21]
+    F1T7 = samples_prediction[:,21:24]
+    F1T8 = samples_prediction[:,24:27]
+    F1T9 = samples_prediction[:,27:30]
+    np.save('F1T0.npy', F1T0)
+    np.save('F1T1.npy', F1T1)
+    np.save('F1T2.npy', F1T2)
+    np.save('F1T3.npy', F1T3)
+    np.save('F1T4.npy', F1T4)
+    np.save('F1T5.npy', F1T5)
+    np.save('F1T6.npy', F1T6)
+    np.save('F1T7.npy', F1T7)
+    np.save('F1T8.npy', F1T8)
+    np.save('F1T9.npy', F1T9)
+    gt = X_test[i][30:60]
+    obs_trajp = sample_observed
+    pred_traj_gtp = gt
+    pred_traj_fake = samples_prediction
+for i in range(1):
+    sample_observed=X_test[20][0:30]
     
+    true_traj= X_test[20][30:60]
     
+    conditional_gmm = gmm.condition(list(range(30)), sample_observed)
+    t0 = time.time()
+    samples_prediction = conditional_gmm.sample(1000)
+    print('generating time:')
+    gtime = time.time() - t0
+    print(gtime)
+    F2T0 = samples_prediction[:,0:3]
+    F2T1 = samples_prediction[:,3:6]
+    F2T2 = samples_prediction[:,6:9]
+    F2T3 = samples_prediction[:,9:12]
+    F2T4 = samples_prediction[:,12:15]
+    F2T5 = samples_prediction[:,15:18]
+    F2T6 = samples_prediction[:,18:21]
+    F2T7 = samples_prediction[:,21:24]
+    F2T8 = samples_prediction[:,24:27]
+    F2T9 = samples_prediction[:,27:30]
+    np.save('F2T0.npy', F2T0)
+    np.save('F2T1.npy', F2T1)
+    np.save('F2T2.npy', F2T2)
+    np.save('F2T3.npy', F2T3)
+    np.save('F2T4.npy', F2T4)
+    np.save('F2T5.npy', F2T5)
+    np.save('F2T6.npy', F2T6)
+    np.save('F2T7.npy', F2T7)
+    np.save('F2T8.npy', F2T8)
+    np.save('F2T9.npy', F2T9)
     gt = X_test[i][30:60]
     obs_trajp = sample_observed
     pred_traj_gtp = gt
     pred_traj_fake = samples_prediction
     
-    obs_trajp = sample_observed.T.reshape(10,3)
-    #print(obs_trajp)
-    pred_traj_gtp = gt.T.reshape(10,3)
-    #print(pred_traj_gtp)
-    pred_traj_fake = samples_prediction.T.reshape(10,3)
-    #print(pred_traj_fake)
-    
-    diff = pred_traj_fake - pred_traj_gtp
-    for j in range(10):
-        dx.append(diff[j][0])
-        dy.append(diff[j][1])
-        dz.append(diff[j][2])
-        if abs(diff[j][0]) > xt or abs(diff[j][1]) > yt or abs(diff[j][2]) > zt:
-            miss += 1
-        s = diff[j][0]**2 + diff[j][1]**2 + diff[j][2]**2
-        #print(str(j) + ':' + str(np.sqrt(s)))
-        ade.append(np.sqrt(s))
-        if j == 9:
-            fde.append(np.sqrt(s))
 
     
     # fig = plt.figure(figsize=(8, 6))
