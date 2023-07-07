@@ -21,9 +21,9 @@ all_files2 = glob.glob("dataset/trajectory_linear/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_linear/val/testdisrupt*.txt")
 # all_files2 = glob.glob("dataset/trajectory_linear/val/testmusk*.txt")
 # all_files2 = glob.glob("dataset/trajectory_linear/val/testpointmusk*.txt")
-# xt = 25
-# yt = 25
-# zt = 9
+xt = 25
+yt = 25
+zt = 9
 #DATASET2
 #all_files = glob.glob("dataset/trajectory_vertical/train.txt")
 #all_files2 = glob.glob("dataset/trajectory_vertical/val/testgt*.txt")
@@ -39,9 +39,9 @@ all_files2 = glob.glob("dataset/trajectory_linear/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testdisrupt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testmusk*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testpointmusk*.txt")
-xt = 0.15
-yt = 0.15
-zt = 0.15
+# xt = 0.15
+# yt = 0.15
+# zt = 0.15
 #DATASET4
 # all_files = glob.glob("dataset/trajectory_linear_raylr/train.txt")
 #all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testgt*.txt")
@@ -222,7 +222,7 @@ for i in range(1):
     obs_trajp = sample_observed
     pred_traj_gtp = gt
     pred_traj_fake = samples_prediction
-    
+    loaded_array = np.load('F1T0.npy.npy')
 
     
     # fig = plt.figure(figsize=(8, 6))
