@@ -17,7 +17,8 @@ import time
 #------------------------------------------------------training file and component --------
 #DATASET1 #train, keep same for each test file
 all_files = glob.glob("dataset/trajectory_linear/train.txt") 
-all_files2 = glob.glob("dataset/trajectory_linear/val/testgt*.txt") 
+agent1_files = glob.glob("dataset/trajectory_linear/agent1.txt") 
+agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt") 
 #all_files2 = glob.glob("dataset/trajectory_linear/val/testdisrupt*.txt")
 # all_files2 = glob.glob("dataset/trajectory_linear/val/testmusk*.txt")
 # all_files2 = glob.glob("dataset/trajectory_linear/val/testpointmusk*.txt")
@@ -120,14 +121,12 @@ t0 = time.time()
 test_trajectory = []
 trajectory1 = []
 #print(all_files2)
-for path in all_files2:
+for path in agent1_files:
     with open(path, "r") as f:
-    #with open("vertical/train/train.txt", "r") as f:
-    #with open("real/train/train.txt", "r") as f:
         for line in f:
             line = line.strip().split('\t')
             if(line[0] == "new"):
-                if len(trajectory1) == 20:
+                if len(trajectory1) == 10:
                     test_trajectory.append(trajectory1)
                 # else:
                 #     for i in range(20-len(trajectory1)):
@@ -140,22 +139,38 @@ for path in all_files2:
                 line = [float(i) for i in line[1:]]
                 trajectory1.append(line)
 test_trajectory.append(trajectory1)
-X_train
-dx = []
-dy = []
-
-dz = []
-ade = []
-fde = []
-X_test= np.array(test_trajectory)
-old_shape = X_test.shape
-X_test = X_test.reshape(old_shape[0],old_shape[1] * old_shape[2])
+agent1= np.array(test_trajectory)
+old_shape = agent1.shape
+agent1 = agent1.reshape(old_shape[0],old_shape[1] * old_shape[2])
 random_state = check_random_state(0)
-miss = 0
+test_trajectory = []
+trajectory1 = []
+#print(all_files2)
+for path in agent2_files:
+    with open(path, "r") as f:
+        for line in f:
+            line = line.strip().split('\t')
+            if(line[0] == "new"):
+                if len(trajectory1) == 10:
+                    test_trajectory.append(trajectory1)
+                # else:
+                #     for i in range(20-len(trajectory1)):
+                #         trajectory1.append([0, 0, 0])
+                #     test_trajectory.append(trajectory1)
+                trajectory1 = []
+                line = [float(i) for i in line[1:]]
+                trajectory1.append(line)
+            else:
+                line = [float(i) for i in line[1:]]
+                trajectory1.append(line)
+test_trajectory.append(trajectory1)
+agent2= np.array(test_trajectory)
+old_shape = agent2.shape
+agent2 = agent2.reshape(old_shape[0],old_shape[1] * old_shape[2])
+random_state = check_random_state(0)
 for i in range(1):
-    sample_observed=X_test[0][0:30]
+    sample_observed=agent1[0][0:30]
     
-    true_traj= X_test[0][30:60]
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     t0 = time.time()
@@ -183,14 +198,9 @@ for i in range(1):
     np.save('F1T7.npy', F1T7)
     np.save('F1T8.npy', F1T8)
     np.save('F1T9.npy', F1T9)
-    gt = X_test[i][30:60]
-    obs_trajp = sample_observed
-    pred_traj_gtp = gt
-    pred_traj_fake = samples_prediction
 for i in range(1):
-    sample_observed=X_test[20][0:30]
+    sample_observed=agent2[0][0:30]
     
-    true_traj= X_test[20][30:60]
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     t0 = time.time()
@@ -218,11 +228,7 @@ for i in range(1):
     np.save('F2T7.npy', F2T7)
     np.save('F2T8.npy', F2T8)
     np.save('F2T9.npy', F2T9)
-    gt = X_test[i][30:60]
-    obs_trajp = sample_observed
-    pred_traj_gtp = gt
-    pred_traj_fake = samples_prediction
-    loaded_array = np.load('F1T0.npy.npy')
+
 
     
     # fig = plt.figure(figsize=(8, 6))
@@ -247,14 +253,4 @@ for i in range(1):
 
 # error=samples_prediction-true_traj
 
-print('number of test' + str(len(X_test)))
-print('ade: '+  str(round(np.mean(ade),2)) + '$\pm$' + str(round(np.var(ade)**0.5,2)))
-print('fde: '+ str(round(np.mean(fde),2)) + '$\pm$' + str(round(np.var(fde)**0.5,2)))
-# print('generating time:')
-# gtime = time.time() - t0
-# print(gtime)
-# print('AGT:')
-# print(gtime/(len(X_test)*10))
-print('miss rate:')
-print(miss/(len(X_test)*10))
 #-------------------------------------------do not change----------------------------
