@@ -74,7 +74,7 @@ def main():     # instant collision probability
     
         n_ds = f1t0.shape[0]
     
-        sep_dis_min = 10
+        sep_dis_min = 20
     
     
         grid_points = 20

@@ -71,7 +71,7 @@ zt = 9
 # yt = 0.15
 # zt = 0.15
 #n_components = 8, 20, 30, 40, 50, 60, 70, 80, 90, 100
-n_components = 5
+n_components = 30
 #------------------------------------------------------TO DO-------------------------------
 #---------------------------------------------------do not change----------------------------
 data = []
@@ -174,7 +174,7 @@ for i in range(1):
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     t0 = time.time()
-    samples_prediction = conditional_gmm.sample(1000)
+    samples_prediction = conditional_gmm.sample(10000)
     print('generating time:')
     gtime = time.time() - t0
     print(gtime)
@@ -204,7 +204,7 @@ for i in range(1):
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     t0 = time.time()
-    samples_prediction = conditional_gmm.sample(1000)
+    samples_prediction = conditional_gmm.sample(10000)
     print('generating time:')
     gtime = time.time() - t0
     print(gtime)
