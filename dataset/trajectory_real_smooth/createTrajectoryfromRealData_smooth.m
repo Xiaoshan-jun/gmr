@@ -90,10 +90,10 @@ for i = 0:80
            fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, historyx(t),historyy(t),historyz(t));
         end
         %disrupt
-        for d = 1:10
+        for d = 1:100
 %             filename = sprintf('val/testdisrupt%d-%d-%d.txt', i,l,d);
 %             fileID = fopen(filename,'w');
-            for t = 1:10
+            for t = 1:20
                 if t == 1
                     h = 'new';
                 elseif t <= 10
@@ -104,7 +104,6 @@ for i = 0:80
                newhistoryx = historyx(t);
                newhistoryy = historyy(t);
                newhistoryz = historyz(t);
-               dt = 0.2 * (rand() - 0.5);
                dx = 0.1*historyx(t)*(rand()-0.5);
                dy = 0.1*historyy(t)*(rand()-0.5);
                dz = 0.1*historyz(t)*(rand()-0.5);
@@ -113,143 +112,11 @@ for i = 0:80
                newhistoryz = newhistoryz + dz;
                fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, newhistoryx,newhistoryy,newhistoryz);
             end
-            for t = 11:20
-                if t == 1
-                    h = 'new';
-                elseif t <= 10
-                    h = 'past';
-                else
-                    h = 'future';
-                end
-               fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, historyx(t),historyy(t),historyz(t));
-            end
         end
-
-        %disruption with variable musk
-        for d = 1:10
-%             filename = sprintf('val/testmusk%d-%d-%d.txt', i,l,d);
-%             fileID = fopen(filename,'w');
-            for t = 1:10
-                if t == 1
-                    h = 'new';
-                elseif t <= 10
-                    h = 'past';
-                else
-                    h = 'future';
-                end
-               newhistoryx = historyx(t);
-               newhistoryy = historyy(t);
-               newhistoryz = historyz(t);
-               dx = 0.1*historyx(t)*(rand()-0.5);
-               dy = 0.1*historyy(t)*(rand()-0.5);
-               dz = 0.1*historyz(t)*(rand()-0.5);
-               newhistoryx = newhistoryx + dx;
-               if rand()< 0.1
-                   newhistoryx = newhistoryx + 10*dx;
-               end
-               newhistoryy = newhistoryy + dy;
-               if rand()< 0.1
-                   newhistoryy = newhistoryy + 10*dy;
-               end
-               newhistoryz = newhistoryz + dz;
-               if rand()< 0.1
-                   newhistoryz = newhistoryz + 10*dz;
-               end
-
-               fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, newhistoryx,newhistoryy,newhistoryz);
-            end
-            for t = 11:20
-                if t == 1
-                    h = 'new';
-                elseif t <= 10
-                    h = 'past';
-                else
-                    h = 'future';
-                end
-               fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, historyx(t),historyy(t),historyz(t));
-            end
-        end
-        %disruption with point missed
-        for d = 1:10
-%             filename = sprintf('val/testpointmusk%d-%d-%d.txt', i,l,d);
-%             fileID = fopen(filename,'w');
-            for t = 1:10
-                if t == 1
-                    h = 'new';
-                elseif t <= 10
-                    h = 'past';
-                else
-                    h = 'future';
-                end
-               newhistoryx = historyx(t);
-               newhistoryy = historyy(t);
-               newhistoryz = historyz(t);
-               dx = 0.1*historyx(t)*(rand()-0.5);
-               dy = 0.1*historyy(t)*(rand()-0.5);
-               dz = 0.1*historyz(t)*(rand()-0.5);
-               newhistoryx = newhistoryx + dx;
-               if rand()< 0.1
-                   newhistoryx = newhistoryx + 10*dx;
-               end
-               newhistoryy = newhistoryy + dy;
-               if rand()< 0.1
-                   newhistoryy = newhistoryy + 10*dy;
-               end
-               newhistoryz = newhistoryz + dz;
-               if rand()< 0.1
-                   newhistoryz = newhistoryz + 10*dz;
-               end
-               if rand()> 0.15
-                    fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, newhistoryx,newhistoryy,newhistoryz);
-               else
-                    fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, newhistoryx+10*dx,newhistoryy+10*dy,newhistoryz+10*dz);
-               end
-            end
-            for t = 11:20
-                if t == 1
-                    h = 'new';
-                elseif t <= 10
-                    h = 'past';
-                else
-                    h = 'future';
-                end
-               fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, historyx(t),historyy(t),historyz(t));
-            end
-        end
-        figure(1)
-        scatter3(historyx, historyy, historyz)
-        plot3(historyx, historyy, historyz, 'o-')
-        title('All Training Trajectory(Smooth Real Data)', 'FontSize', 14)
-        xlabel('x', 'FontSize', 14)
-        ylabel('y', 'FontSize', 14)
-        zlabel('z', 'FontSize', 14)
-        hold on
-        xlim([-1.5 1.5])
-        ylim([-1.5 1.5])
-        zlim([-0.1 2])
     end
 
 end
 % str = sprintf('All Training Trajectory(Smooth Real Data).png');
 % print(gcf,str,'-dpng','-r900'); 
 fclose(fileID);
-%%
-clc
-clear all
-%filename = sprintf('realdata/automatic/flightdata%d.csv', 17);
-filename = sprintf('realdata/flightdata%d.csv', 61);
-T = readtable('realdata/flightdata0.csv');
-a = size(T);
-
-for i = 1:a
-    x = table2array(T(i, 2));
-    y = table2array(T(i, 3));
-    z = table2array(T(i, 4));
-    fullhistoryx(i) =  x;
-    fullhistoryy(i) =y;
-    fullhistoryz(i) =z;
-end
-figure(1)
-scatter3(fullhistoryx, fullhistoryy, fullhistoryz)
-plot3(fullhistoryx, fullhistoryy, fullhistoryz, 'o-')
 
