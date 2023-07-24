@@ -8,7 +8,6 @@ from sympy import *
 # plot_implicit, symbols, Eq, And, Or
 
 from scipy import stats
-a
 
 
 
@@ -72,7 +71,7 @@ def main():     # instant collision probability
     
         n_ds = f1t0.shape[0]
     
-        sep_dis_min = 10
+        sep_dis_min = 0.1
     
     
         grid_points = 20

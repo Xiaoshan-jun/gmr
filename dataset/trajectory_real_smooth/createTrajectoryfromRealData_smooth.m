@@ -90,7 +90,7 @@ for i = 0:80
            fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, historyx(t),historyy(t),historyz(t));
         end
         %disrupt
-        for d = 1:100
+        for d = 1:10
 %             filename = sprintf('val/testdisrupt%d-%d-%d.txt', i,l,d);
 %             fileID = fopen(filename,'w');
             for t = 1:20

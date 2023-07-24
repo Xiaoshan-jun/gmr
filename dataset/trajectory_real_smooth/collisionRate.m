@@ -160,7 +160,7 @@ for l = 1:1
         end
 end
 %%
-for i = 0 : 1000000 %trajectory number
+for i = 0 : 100000 %trajectory number
     state1 = [0 ,0 ,0];
     state2 = [0 ,0 ,0];
     for t = 11 : 20
