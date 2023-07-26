@@ -30,8 +30,8 @@ agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt")  #agent2
 # zt = 9
 #DATASET3
 # all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
-# agent1_files = glob.glob("dataset/trajectory_real_smooth/agent1.txt") 
-# agent2_files = glob.glob("dataset/trajectory_real_smooth/agent2.txt") 
+# agent1_files = glob.glob("dataset/tajectory_real_smooth/agent1.txt")  #agent1
+# agent2_files = glob.glob("dataset/tajectory_real_smooth/agent2.txt")  #agent2
 # all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testdisrupt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testmusk*.txt")
@@ -39,33 +39,7 @@ agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt")  #agent2
 # xt = 0.15
 # yt = 0.15
 # zt = 0.15
-#DATASET4
-# all_files = glob.glob("dataset/trajectory_linear_raylr/train.txt")
-#all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testgt*.txt")
-#all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testdisrupt*.txt")
-#all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testmusk*.txt")
-# all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testpointmusk*.txt")
-# xt = 25
-# yt = 25
-# zt = 9
-#DATASET5
-# all_files = glob.glob("dataset/trajectory_vertical_raylr/train.txt")
-#all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testgt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testdisrupt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testmusk*.txt")
-# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testpointmusk*.txt")
-# xt = 25
-# yt = 25
-# zt = 9
-#DATASET6
-# all_files = glob.glob("dataset/trajectory_real_smooth_raylr/train.txt")
-# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testgt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testdisrupt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testmusk*.txt")
-# all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testpointmusk*.txt")
-# xt = 0.15
-# yt = 0.15
-# zt = 0.15
+
 #n_components = 8, 20, 30, 40, 50, 60, 70, 80, 90, 100
 n_components = 8
 #------------------------------------------------------TO DO-------------------------------
@@ -170,7 +144,7 @@ for i in range(1):
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     t0 = time.time()
-    samples_prediction = conditional_gmm.sample(100000)
+    samples_prediction = conditional_gmm.sample(1000)
     print('generating time:')
     gtime = time.time() - t0
     print(gtime)
@@ -200,7 +174,7 @@ for i in range(1):
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     t0 = time.time()
-    samples_prediction = conditional_gmm.sample(100000)
+    samples_prediction = conditional_gmm.sample(1000)
     print('generating time:')
     gtime = time.time() - t0
     print(gtime)

@@ -1,9 +1,9 @@
 %linear
 %initial position
 initial_Position1 = 0;
-initial_Position2 = 1;
-CT = 10; %collision thereshold
+initial_Position2 = 1;%2,3,4,5,6,7
 %------------------------do not change code below----------------------
+CT = 10; %collision thereshold
 if mod(initial_Position1,8) == 0
 state1 = [400, 400, 140];
 elseif mod(initial_Position1,8) == 1
