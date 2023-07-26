@@ -8,9 +8,6 @@ from sympy import *
 # plot_implicit, symbols, Eq, And, Or
 
 from scipy import stats
-from KDEpy import FFTKDE
-
-from sklearn.metrics import jaccard_score
 
 
 
@@ -62,11 +59,12 @@ def myKDE(data, grid_points):
 
 
 def main():     # instant collision probability
+    sep_dis_min = 10 #change it
 
-    for i in range(10):
-        name1 = 'F1T' + str(i) + '.npy'
-        name2 = 'F2T' + str(i) + '.npy'
-        f1t0 = np.load(name1)  # 1000by3
+    for time in range(10):
+        name1 = 'F1T' + str(time) + '.npy'
+        name2 = 'F2T' + str(time) + '.npy'
+        f1t0 = np.load(name1)  # 100000by3
         f2t0 = np.load(name2)  # 1000by3
 
         dr = f1t0 - f2t0
@@ -74,7 +72,7 @@ def main():     # instant collision probability
     
         n_ds = f1t0.shape[0]
     
-        sep_dis_min = 20
+        
     
     
         grid_points = 20
@@ -107,7 +105,7 @@ def main():     # instant collision probability
     
         mat_select = np.multiply(den, mat_bin)
         prob_kde = np.sum(mat_select) * 1.0 / np.sum(den)
-        print("prob of instant collision calc by KDE:", prob_kde)    # 0.14
+        print("prob of instant collision calc by KDE", time, ":" ,prob_kde)    # 0.14
     
     
     
@@ -121,7 +119,7 @@ def main():     # instant collision probability
                 cnt = cnt + 1
     
         prob_mc = (cnt*1.0)/n_ds
-        print("prob of instant collision calc by MC:", prob_mc)  # 0.13
+        print("prob of instant collision calc by MC", time , ":",prob_mc)  # 0.13
 
 
 

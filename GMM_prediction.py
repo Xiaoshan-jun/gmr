@@ -16,15 +16,9 @@ import time
 #------------------------------------------------------TO DO-------------------------------
 #------------------------------------------------------training file and component --------
 #DATASET1 #train, keep same for each test file
-all_files = glob.glob("dataset/trajectory_linear/train.txt") 
-agent1_files = glob.glob("dataset/trajectory_linear/agent1.txt") 
-agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt") 
-#all_files2 = glob.glob("dataset/trajectory_linear/val/testdisrupt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_linear/val/testmusk*.txt")
-# all_files2 = glob.glob("dataset/trajectory_linear/val/testpointmusk*.txt")
-xt = 25
-yt = 25
-zt = 9
+all_files = glob.glob("dataset/trajectory_linear/train.txt")  #training
+agent1_files = glob.glob("dataset/trajectory_linear/agent1.txt")  #agent1
+agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt")  #agent2
 #DATASET2
 #all_files = glob.glob("dataset/trajectory_vertical/train.txt")
 #all_files2 = glob.glob("dataset/trajectory_vertical/val/testgt*.txt")
@@ -35,7 +29,9 @@ zt = 9
 # yt = 25
 # zt = 9
 #DATASET3
-#all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
+# all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
+# agent1_files = glob.glob("dataset/trajectory_real_smooth/agent1.txt") 
+# agent2_files = glob.glob("dataset/trajectory_real_smooth/agent2.txt") 
 # all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testdisrupt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testmusk*.txt")
@@ -71,7 +67,7 @@ zt = 9
 # yt = 0.15
 # zt = 0.15
 #n_components = 8, 20, 30, 40, 50, 60, 70, 80, 90, 100
-n_components = 30
+n_components = 8
 #------------------------------------------------------TO DO-------------------------------
 #---------------------------------------------------do not change----------------------------
 data = []
@@ -174,7 +170,7 @@ for i in range(1):
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     t0 = time.time()
-    samples_prediction = conditional_gmm.sample(10000)
+    samples_prediction = conditional_gmm.sample(100000)
     print('generating time:')
     gtime = time.time() - t0
     print(gtime)
@@ -204,7 +200,7 @@ for i in range(1):
     
     conditional_gmm = gmm.condition(list(range(30)), sample_observed)
     t0 = time.time()
-    samples_prediction = conditional_gmm.sample(10000)
+    samples_prediction = conditional_gmm.sample(100000)
     print('generating time:')
     gtime = time.time() - t0
     print(gtime)
