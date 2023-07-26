@@ -16,12 +16,9 @@ import time
 #------------------------------------------------------TO DO-------------------------------
 #------------------------------------------------------training file and component --------
 #DATASET1 #train, keep same for each test file
-# all_files = glob.glob("dataset/trajectory_linear/train.txt") 
-# agent1_files = glob.glob("dataset/trajectory_linear/agent1.txt") 
-# agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt") 
-#all_files2 = glob.glob("dataset/trajectory_linear/val/testdisrupt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_linear/val/testmusk*.txt")
-# all_files2 = glob.glob("dataset/trajectory_linear/val/testpointmusk*.txt")
+all_files = glob.glob("dataset/trajectory_linear/train.txt")  #training
+agent1_files = glob.glob("dataset/trajectory_linear/agent1.txt")  #agent1
+agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt")  #agent2
 #DATASET2
 #all_files = glob.glob("dataset/trajectory_vertical/train.txt")
 #all_files2 = glob.glob("dataset/trajectory_vertical/val/testgt*.txt")
@@ -32,9 +29,9 @@ import time
 # yt = 25
 # zt = 9
 #DATASET3
-all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
-agent1_files = glob.glob("dataset/trajectory_real_smooth/agent1.txt") 
-agent2_files = glob.glob("dataset/trajectory_real_smooth/agent2.txt") 
+# all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
+# agent1_files = glob.glob("dataset/trajectory_real_smooth/agent1.txt") 
+# agent2_files = glob.glob("dataset/trajectory_real_smooth/agent2.txt") 
 # all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testdisrupt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testmusk*.txt")

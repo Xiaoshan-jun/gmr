@@ -1,12 +1,50 @@
-%scenario 1
-%starts (400,400,140) and (400,0,140)
-%straight line
+%linear
+%initial position
+initial_Position1 = 0;
+initial_Position2 = 1;
+CT = 10; %collision thereshold
+%------------------------do not change code below----------------------
+if mod(initial_Position1,8) == 0
+state1 = [400, 400, 140];
+elseif mod(initial_Position1,8) == 1
+state1 = [-400, 400, 140];
+elseif mod(initial_Position1,8) == 2
+state1 = [400, -400, 140];
+elseif mod(initial_Position1,8)== 3
+state1 = [200, 400, 140];
+elseif mod(initial_Position1,8) == 4
+state1 = [400, 200, 140 ];
+elseif mod(initial_Position1,8) == 5
+state1 = [200, -400, 140];
+elseif mod(initial_Position1,8) == 6
+state1 = [-400, 200, 140];
+elseif mod(initial_Position1,8) == 7
+state1 = [-400, -400, 140 ];
+end
+if mod(initial_Position2,8) == 0
+state2 = [400, 400, 140];
+elseif mod(initial_Position2,8) == 1
+state2 = [-400, 400, 140];
+elseif mod(initial_Position2,8) == 2
+state2 = [400, -400, 140];
+elseif mod(initial_Position2,8)== 3
+state2 = [200, 400, 140];
+elseif mod(initial_Position2,8) == 4
+state2 = [400, 200, 140 ];
+elseif mod(initial_Position2,8) == 5
+state2 = [200, -400, 140];
+elseif mod(initial_Position2,8) == 6
+state2 = [-400, 200, 140];
+elseif mod(initial_Position2,8) == 7
+state2 = [-400, -400, 140 ];
+end
+
+
 fileID = fopen('agent1.txt','w');
 fileID2 = fopen('agent2.txt','w');
 mvx = 25; %max horizontal speed
 mvy = 25; %max horizontal speed
 mvz = 9;  %max descend speed
-CT = 10; %collision thereshold
 t1 = 0;
 t2 = 0;
 t3 = 0;
@@ -17,45 +55,42 @@ t7 = 0;
 t8 = 0;
 t9 = 0;
 t10 = 0;
-for i = 0 : 100000 %trajectory number
-    state1 = [400  , 400 , 140 ];
-    state2 = [400  , 200, 140];
-    destination = [0, 0, 0];
-    first = 1;        
-%     filename = sprintf('val/testgt%d.txt', i);
-%     fileID = fopen(filename,'w');
-    for t = 1: 10
-        vb = (destination - state1)/(21 - t);
-        xv = vb(1);
-        yv = vb(2);
-        zv = vb(3);
+simulationtime = 100000;
+destination = [0, 0, 0];
+first = 1;        
+for t = 1: 10
+    vb = (destination - state1)/(21 - t);
+    xv = vb(1);
+    yv = vb(2);
+    zv = vb(3);
 
-        state1(1) = state1(1) + xv;
-        state1(2) = state1(2) + yv;
-        state1(3) = max(state1(3) + zv,0); % bound z above zero
-        if first == 1
-            h = 'new';
-            first = 0;
-        elseif t <= 10
-            h = 'past';
-        else
-            h = 'future';
-        end
-        if i == 1
-            fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, state1(1),state1(2),state1(3));
-        end
-        vb = (destination - state2)/(21 - t);
-        xv = vb(1);
-        yv = vb(2);
-        zv = vb(3);
-
-        state2(1) = state2(1) + xv;
-        state2(2) = state2(2) + yv;
-        state2(3) = max(state2(3) + zv,0); % bound z above zero
-        if i == 1
-        fprintf(fileID2,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, state2(1),state2(2),state2(3));
-        end
+    state1(1) = state1(1) + xv;
+    state1(2) = state1(2) + yv;
+    state1(3) = max(state1(3) + zv,0); % bound z above zero
+    if first == 1
+        h = 'new';
+        first = 0;
+    elseif t <= 10
+        h = 'past';
+    else
+        h = 'future';
     end
+    fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, state1(1),state1(2),state1(3));
+    vb = (destination - state2)/(21 - t);
+    xv = vb(1);
+    yv = vb(2);
+    zv = vb(3);
+
+    state2(1) = state2(1) + xv;
+    state2(2) = state2(2) + yv;
+    state2(3) = max(state2(3) + zv,0); % bound z above zero
+    fprintf(fileID2,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, state2(1),state2(2),state2(3));
+end
+initialstate1 = state1;
+initialstate2 = state2;
+for i = 0 : 100000 %trajectory number
+    state1 = initialstate1;
+    state2 = initialstate2;
     for t = 11 : 20
         vb = (destination - state1)/(21 - t);
         xv = vb(1) + 25*(rand() - 0.5);
@@ -65,14 +100,7 @@ for i = 0 : 100000 %trajectory number
         state1(1) = state1(1) + xv;
         state1(2) = state1(2) + yv;
         state1(3) = max(state1(3) + zv,0); % bound z above zero
-        if first == 1
-            h = 'new';
-            first = 0;
-        elseif t <= 10
-            h = 'past';
-        else
-            h = 'future';
-        end
+
         vb = (destination - state2)/(21 - t);
         xv = vb(1) + 25*(rand() - 0.5);
         yv = vb(2) + 25*(rand() - 0.5);
@@ -114,7 +142,7 @@ for i = 0 : 100000 %trajectory number
             
     end
 end
-ans = [t1,t2,t3,t4,t5,t6,t7,t8,t9,t10];
+ans = [t1/simulationtime,t2/simulationtime,t3/simulationtime,t4/simulationtime,t5/simulationtime,t6/simulationtime,t7/simulationtime,t8/simulationtime,t9/simulationtime,t10/simulationtime];
 save('ans.mat', 'ans');
 %str = sprintf('linear%d.png', i);
 
