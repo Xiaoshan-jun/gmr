@@ -43,75 +43,69 @@ xt = 0.15
 yt = 0.15
 zt = 0.15
 #DATASET4
-# all_files = glob.glob("dataset/trajectory_linear_raylr/train.txt")
-#all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testgt*.txt")
-#all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testdisrupt*.txt")
-#all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testmusk*.txt")
-# all_files2 = glob.glob("dataset/trajectory_linear_raylr/val/testpointmusk*.txt")
-# xt = 25
-# yt = 25
-# zt = 9
-#DATASET5
-# all_files = glob.glob("dataset/trajectory_vertical_raylr/train.txt")
-#all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testgt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testdisrupt*.txt")
-# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testmusk*.txt")
-# all_files2 = glob.glob("dataset/trajectory_vertical_raylr/val/testpointmusk*.txt")
-# xt = 25
-# yt = 25
-# zt = 9
-#DATASET6
-all_files = glob.glob("dataset/trajectory_real_smooth_raylr/train.txt")
-all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testgt*.txt")
-all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testdisrupt*.txt")
-all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testmusk*.txt")
-all_files2 = glob.glob("dataset/trajectory_real_smooth_raylr/val/testpointmusk*.txt")
-# xt = 0.15
-# yt = 0.15
-# zt = 0.15
-#n_components = 8, 20, 30, 40, 50, 60, 70, 80, 90, 100
-n_components = 8
+all_files = glob.glob("dataset/cmu/train.txt")
+all_files2 = glob.glob("dataset/cmu/val/testgt*.txt")
+past = 20
+prediction = 20
+train = 0
+n_components = 200
 #------------------------------------------------------TO DO-------------------------------
 #---------------------------------------------------do not change----------------------------
-data = []
-train_trajectory = []
-trajectory1 = []
-print(all_files)
-for path in all_files:
-    with open(path, "r") as f:
-    #with open("vertical/train/train.txt", "r") as f:
-    #with open("real/train/train.txt", "r") as f:
-        for line in f:
-            line = line.strip().split('\t')
-            if(line[0] == "new"):
-                if len(trajectory1) == 20:
-                    train_trajectory.append(trajectory1)
-                # else:
-                #     for i in range(20-len(trajectory1)):
-                #         trajectory1.append([0, 0, 0])
-                #     test_trajectory.append(trajectory1)
-                trajectory1 = []
-                line = [float(i) for i in line[1:]]
-                trajectory1.append(line)
-            else:
-                line = [float(i) for i in line[1:]]
-                trajectory1.append(line)
-
-
-X_train= np.array(train_trajectory)
-old_shape = X_train.shape
-X_train = X_train.reshape(old_shape[0],old_shape[1] * old_shape[2])
-random_state = check_random_state(0)
-
-initial_means = kmeansplusplus_initialization(X_train, n_components, random_state)
-initial_covs = covariance_initialization(X_train, n_components)
-bgmm = BayesianGaussianMixture(n_components=n_components, max_iter=100).fit(X_train)
-gmm = GMM(
-    n_components=n_components,
-    priors=bgmm.weights_,
-    means=bgmm.means_,
-    covariances=bgmm.covariances_,
-    random_state=random_state)
+if train:
+    data = []
+    train_trajectory = []
+    trajectory1 = []
+    print(all_files)
+    for path in all_files:
+        with open(path, "r") as f:
+        #with open("vertical/train/train.txt", "r") as f:
+        #with open("real/train/train.txt", "r") as f:
+            for line in f:
+                line = line.strip().split('\t')
+                if(line[0] == "new"):
+                    if len(trajectory1) == past + prediction:
+                        train_trajectory.append(trajectory1)
+                    # else:
+                    #     for i in range(20-len(trajectory1)):
+                    #         trajectory1.append([0, 0, 0])
+                    #     test_trajectory.append(trajectory1)
+                    trajectory1 = []
+                    line = [float(i) for i in line[1:]]
+                    trajectory1.append(line)
+                else:
+                    line = [float(i) for i in line[1:]]
+                    trajectory1.append(line)
+    
+    
+    X_train= np.array(train_trajectory)
+    old_shape = X_train.shape
+    X_train = X_train.reshape(old_shape[0],old_shape[1] * old_shape[2])
+    random_state = check_random_state(0)
+    
+    initial_means = kmeansplusplus_initialization(X_train, n_components, random_state)
+    initial_covs = covariance_initialization(X_train, n_components)
+    bgmm = BayesianGaussianMixture(n_components=n_components, max_iter=100).fit(X_train)
+    np.save('weights.npy', bgmm.weights_)
+    np.save('means.npy', bgmm.means_)
+    np.save('covariances.npy', bgmm.covariances_)
+    #np.save('random_state.npy', random_state)
+    gmm = GMM(
+        n_components=n_components,
+        priors=bgmm.weights_,
+        means=bgmm.means_,
+        covariances=bgmm.covariances_,
+        random_state=random_state)
+else:
+    weights = np.load('weights.npy')
+    means = np.load('means.npy')
+    covariances = np.load('covariances.npy')
+    random_state = check_random_state(0)
+    gmm = GMM(
+        n_components=n_components,
+        priors=weights,
+        means=means,
+        covariances=covariances,
+        random_state=random_state)
 
 data = []
 
@@ -127,7 +121,7 @@ for path in all_files2:
         for line in f:
             line = line.strip().split('\t')
             if(line[0] == "new"):
-                if len(trajectory1) == 20:
+                if len(trajectory1) == past + prediction:
                     test_trajectory.append(trajectory1)
                 # else:
                 #     for i in range(20-len(trajectory1)):
@@ -140,7 +134,6 @@ for path in all_files2:
                 line = [float(i) for i in line[1:]]
                 trajectory1.append(line)
 test_trajectory.append(trajectory1)
-X_train
 dx = []
 dy = []
 
@@ -153,28 +146,28 @@ X_test = X_test.reshape(old_shape[0],old_shape[1] * old_shape[2])
 random_state = check_random_state(0)
 miss = 0
 for i in range(len(X_test)):
-    sample_observed=X_test[i][0:30]
+    sample_observed=X_test[i][0:3*past]
     
-    true_traj= X_test[i][30:60]
+    true_traj= X_test[i][3*past:3*past + 3*prediction]
     
-    conditional_gmm = gmm.condition(list(range(30)), sample_observed)
+    conditional_gmm = gmm.condition(list(range(3*prediction)), sample_observed)
     samples_prediction = conditional_gmm.sample(1)
     
     
-    gt = X_test[i][30:60]
+    gt = X_test[i][3*past:3*past + 3*prediction]
     obs_trajp = sample_observed
     pred_traj_gtp = gt
     pred_traj_fake = samples_prediction
     
-    obs_trajp = sample_observed.T.reshape(10,3)
+    obs_trajp = sample_observed.T.reshape(prediction,3)
     #print(obs_trajp)
-    pred_traj_gtp = gt.T.reshape(10,3)
+    pred_traj_gtp = gt.T.reshape(prediction,3)
     #print(pred_traj_gtp)
-    pred_traj_fake = samples_prediction.T.reshape(10,3)
+    pred_traj_fake = samples_prediction.T.reshape(prediction,3)
     #print(pred_traj_fake)
     
     diff = pred_traj_fake - pred_traj_gtp
-    for j in range(10):
+    for j in range(prediction):
         dx.append(diff[j][0])
         dy.append(diff[j][1])
         dz.append(diff[j][2])
@@ -183,7 +176,7 @@ for i in range(len(X_test)):
         s = diff[j][0]**2 + diff[j][1]**2 + diff[j][2]**2
         #print(str(j) + ':' + str(np.sqrt(s)))
         ade.append(np.sqrt(s))
-        if j == 9:
+        if j == prediction - 1:
             fde.append(np.sqrt(s))
 
     
@@ -218,5 +211,5 @@ print('fde: '+ str(round(np.mean(fde),2)) + '$\pm$' + str(round(np.var(fde)**0.5
 # print('AGT:')
 # print(gtime/(len(X_test)*10))
 print('miss rate:')
-print(miss/(len(X_test)*10))
+print(miss/(len(X_test)*prediction))
 #-------------------------------------------do not change----------------------------
