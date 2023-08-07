@@ -43,15 +43,27 @@ xt = 0.15
 yt = 0.15
 zt = 0.15
 #DATASET4
-all_files = glob.glob("dataset/cmu/train.txt")
-all_files2 = glob.glob("dataset/cmu/val/testgt*.txt")
-past = 20
-prediction = 20
-train = 0
-n_components = 200
+# all_files = glob.glob("dataset/cmu/train.txt")
+# all_files2 = glob.glob("dataset/cmu/val/testgt*.txt")
+#DATASET5
+all_files = glob.glob("dataset/cmu_original/7day2train.txt")
+all_files2 = glob.glob("dataset/cmu_original/7day2/val/testgt*.txt")
+past = 11
+prediction = 12
+train = 1
+
+
+n_components = 300
+saveweights = '7day2wights300.npy'
+savemeans = '7day2means300.npy'
+savecovariances = '7day2covariances300.npy'
+loadweights = 'wights1.npy'
+loadmeans = 'means1.npy'
+loadcovariances = 'covariances1.npy'
 #------------------------------------------------------TO DO-------------------------------
 #---------------------------------------------------do not change----------------------------
 if train:
+    t0 = time.time()
     data = []
     train_trajectory = []
     trajectory1 = []
@@ -70,13 +82,19 @@ if train:
                     #         trajectory1.append([0, 0, 0])
                     #     test_trajectory.append(trajectory1)
                     trajectory1 = []
-                    line = [float(i) for i in line[1:]]
-                    trajectory1.append(line)
+                    line1 = [float(i) for i in line[1:4]]
+                    line2 = [float(i) for i in line[4:]]
+                    line2.append(0)
+                    trajectory1.append(line1)
+                    trajectory1.append(line2)
                 else:
                     line = [float(i) for i in line[1:]]
                     trajectory1.append(line)
     
-    
+    print('Loading time:')
+    gtime = time.time() - t0
+    print(gtime)
+    t0 = time.time()
     X_train= np.array(train_trajectory)
     old_shape = X_train.shape
     X_train = X_train.reshape(old_shape[0],old_shape[1] * old_shape[2])
@@ -85,20 +103,23 @@ if train:
     initial_means = kmeansplusplus_initialization(X_train, n_components, random_state)
     initial_covs = covariance_initialization(X_train, n_components)
     bgmm = BayesianGaussianMixture(n_components=n_components, max_iter=100).fit(X_train)
-    np.save('weights.npy', bgmm.weights_)
-    np.save('means.npy', bgmm.means_)
-    np.save('covariances.npy', bgmm.covariances_)
-    #np.save('random_state.npy', random_state)
+    np.save(saveweights, bgmm.weights_)
+    np.save(savemeans, bgmm.means_)
+    np.save(savecovariances, bgmm.covariances_)
+    print('number of train data: ' +  str(len(X_train)))
     gmm = GMM(
         n_components=n_components,
         priors=bgmm.weights_,
         means=bgmm.means_,
         covariances=bgmm.covariances_,
         random_state=random_state)
+    print('train time:')
+    gtime = time.time() - t0
+    print(gtime)
 else:
-    weights = np.load('weights.npy')
-    means = np.load('means.npy')
-    covariances = np.load('covariances.npy')
+    weights = np.load(loadweights)
+    means = np.load(loadmeans)
+    covariances = np.load(loadcovariances)
     random_state = check_random_state(0)
     gmm = GMM(
         n_components=n_components,
@@ -108,7 +129,6 @@ else:
         random_state=random_state)
 
 data = []
-
 t0 = time.time()
 #all_files = glob.glob("trajectory_real/val_smooth/testpointmusk*.txt")
 test_trajectory = []
@@ -116,8 +136,6 @@ trajectory1 = []
 #print(all_files2)
 for path in all_files2:
     with open(path, "r") as f:
-    #with open("vertical/train/train.txt", "r") as f:
-    #with open("real/train/train.txt", "r") as f:
         for line in f:
             line = line.strip().split('\t')
             if(line[0] == "new"):
@@ -128,8 +146,11 @@ for path in all_files2:
                 #         trajectory1.append([0, 0, 0])
                 #     test_trajectory.append(trajectory1)
                 trajectory1 = []
-                line = [float(i) for i in line[1:]]
-                trajectory1.append(line)
+                line1 = [float(i) for i in line[1:4]]
+                line2 = [float(i) for i in line[4:]]
+                line2.append(0)
+                trajectory1.append(line1)
+                trajectory1.append(line2)
             else:
                 line = [float(i) for i in line[1:]]
                 trajectory1.append(line)
@@ -141,6 +162,7 @@ dz = []
 ade = []
 fde = []
 X_test= np.array(test_trajectory)
+print('number of test' + str(len(X_test)))
 old_shape = X_test.shape
 X_test = X_test.reshape(old_shape[0],old_shape[1] * old_shape[2])
 random_state = check_random_state(0)
@@ -150,34 +172,35 @@ for i in range(len(X_test)):
     
     true_traj= X_test[i][3*past:3*past + 3*prediction]
     
-    conditional_gmm = gmm.condition(list(range(3*prediction)), sample_observed)
-    samples_prediction = conditional_gmm.sample(1)
-    
+    conditional_gmm = gmm.condition(list(range(3*past)), sample_observed)
+    samples_prediction = conditional_gmm.sample(5)
     
     gt = X_test[i][3*past:3*past + 3*prediction]
     obs_trajp = sample_observed
     pred_traj_gtp = gt
-    pred_traj_fake = samples_prediction
-    
-    obs_trajp = sample_observed.T.reshape(prediction,3)
-    #print(obs_trajp)
-    pred_traj_gtp = gt.T.reshape(prediction,3)
-    #print(pred_traj_gtp)
-    pred_traj_fake = samples_prediction.T.reshape(prediction,3)
-    #print(pred_traj_fake)
-    
-    diff = pred_traj_fake - pred_traj_gtp
-    for j in range(prediction):
-        dx.append(diff[j][0])
-        dy.append(diff[j][1])
-        dz.append(diff[j][2])
-        if abs(diff[j][0]) > xt or abs(diff[j][1]) > yt or abs(diff[j][2]) > zt:
-            miss += 1
-        s = diff[j][0]**2 + diff[j][1]**2 + diff[j][2]**2
-        #print(str(j) + ':' + str(np.sqrt(s)))
-        ade.append(np.sqrt(s))
-        if j == prediction - 1:
-            fde.append(np.sqrt(s))
+    ade1 = 1000
+    fde1 = 1000
+    for x in range(5):
+        adet = []
+        pred_traj_fake = samples_prediction[x]
+        
+        obs_trajp = sample_observed.T.reshape(past,3)
+        #print(obs_trajp)
+        pred_traj_gtp = gt.T.reshape(prediction,3)
+        #print(pred_traj_gtp)
+        pred_traj_fake = pred_traj_fake.T.reshape(prediction,3)
+        #print(pred_traj_fake)
+        
+        diff = pred_traj_fake - pred_traj_gtp
+        loss = diff**2
+        loss = np.sqrt(np.sum(loss,1))
+        if np.mean(loss) < ade1:
+            ade1 = np.mean(loss)
+        diff = (pred_traj_fake[-1,:] - pred_traj_gtp[-1,:])**2
+        if np.sqrt(np.sum(diff)) < fde1:
+            fde1 = np.sqrt(np.sum(diff))
+    ade.append(ade1)
+    fde.append(fde1)
 
     
     # fig = plt.figure(figsize=(8, 6))
@@ -200,14 +223,12 @@ for i in range(len(X_test)):
     # ax.legend()
 
 
-# error=samples_prediction-true_traj
 
-print('number of test' + str(len(X_test)))
 print('ade: '+  str(round(np.mean(ade),2)) + '$\pm$' + str(round(np.var(ade)**0.5,2)))
 print('fde: '+ str(round(np.mean(fde),2)) + '$\pm$' + str(round(np.var(fde)**0.5,2)))
-# print('generating time:')
-# gtime = time.time() - t0
-# print(gtime)
+print('generating time:')
+gtime = time.time() - t0
+print(gtime)
 # print('AGT:')
 # print(gtime/(len(X_test)*10))
 print('miss rate:')
