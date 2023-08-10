@@ -46,17 +46,23 @@ zt = 0.15
 # all_files = glob.glob("dataset/cmu/train.txt")
 # all_files2 = glob.glob("dataset/cmu/val/testgt*.txt")
 #DATASET5
-all_files = glob.glob("dataset/cmu_original/7day2train.txt")
-all_files2 = glob.glob("dataset/cmu_original/7day2/val/testgt*.txt")
+day = 4
+filename = 'dataset/cmu_original/7day' + str(day) + 'train.txt'
+all_files = glob.glob(filename)
+filename = 'dataset/cmu_original/7days' + str(day) + '/val/testgt*.txt'
+all_files2 = glob.glob(filename)
 past = 11
 prediction = 12
 train = 1
 
 
 n_components = 300
-saveweights = '7day2wights300.npy'
-savemeans = '7day2means300.npy'
-savecovariances = '7day2covariances300.npy'
+filename = '7daywights' + str(day) + str(n_components) + '.npy'
+saveweights = filename
+filename = '7daymeans' + str(day) + str(n_components) + '.npy'
+savemeans = filename
+filename = '7daycovariances' + str(day) + str(n_components) + '.npy'
+savecovariances = filename
 loadweights = 'wights1.npy'
 loadmeans = 'means1.npy'
 loadcovariances = 'covariances1.npy'

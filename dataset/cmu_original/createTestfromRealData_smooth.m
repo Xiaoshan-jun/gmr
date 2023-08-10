@@ -11,7 +11,7 @@ prediction = 12;
 skip = 10;
 for i = 1:3089
     try
-        filename = sprintf('7day2/test/%d.txt', i);
+        filename = sprintf('7days4/test/%d.txt', i);
         T = readtable(filename);
     catch
         continue
@@ -69,7 +69,7 @@ for i = 1:3089
     lastframe = length(fullhistoryx) - past - prediction * skip;
     %pick 10 history from full history
     for l = 1:10:lastframe
-        filename = sprintf('7day2/val/testgt%d.txt', i*10000 + l);
+        filename = sprintf('7days4/val/testgt%d.txt', i*10000 + l);
         fileID = fopen(filename,'w');
         historyx = [];
         historyy = [];

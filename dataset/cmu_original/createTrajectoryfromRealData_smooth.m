@@ -5,7 +5,7 @@
 agentcount = 0;
 t = 0;
 b = 0.1;
-fileID = fopen('7day2train.txt','w');
+fileID = fopen('7day4train.txt','w');
 smoothparameter = 0.001;
 past = 10;
 prediction = 12;
@@ -14,7 +14,7 @@ sample = 10;
 %fileID = fopen('val.txt','w');
 for i = 1:345
     try
-        filename = sprintf('7day2/train/%d.txt', i);
+        filename = sprintf('7days4/train/%d.txt', i);
         T = readtable(filename);
     catch
         continue
@@ -56,7 +56,7 @@ for i = 1:345
 
     %pick 10 history from full history
     lastframe = length(fullhistoryx) - past - prediction * skip;
-    for l = 1:3:lastframe
+    for l = 1:1:lastframe
         
         %gt
 %         filename = sprintf('val/testgt%d-%d.txt', i,l);
