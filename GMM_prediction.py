@@ -46,13 +46,13 @@ zt = 0.15
 # all_files = glob.glob("dataset/cmu/train.txt")
 # all_files2 = glob.glob("dataset/cmu/val/testgt*.txt")
 #DATASET5
-day = 4
+day = 1
 filename = 'dataset/cmu_original/7day' + str(day) + 'train.txt'
 all_files = glob.glob(filename)
 filename = 'dataset/cmu_original/7days' + str(day) + '/val/testgt*.txt'
 all_files2 = glob.glob(filename)
 past = 11
-prediction = 12
+prediction = 30
 train = 1
 
 
