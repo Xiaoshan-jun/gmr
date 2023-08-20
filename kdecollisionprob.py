@@ -61,7 +61,7 @@ def myKDE(data, grid_points):
 def main():     # instant collision probability
     sep_dis_min = 10 #change it
 
-    for time in range(10):
+    for time in range(240):
         name1 = 'F1T' + str(time) + '.npy'
         name2 = 'F2T' + str(time) + '.npy'
         f1t0 = np.load(name1)  # 100000by3
