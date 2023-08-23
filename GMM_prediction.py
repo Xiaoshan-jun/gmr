@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from scipy import stats
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 from sklearn.mixture import BayesianGaussianMixture
@@ -14,46 +13,17 @@ from statistics import variance
 import glob
 import time
 
-def myKDE(data, grid_points):
-    # grid_custom = np.linspace(-100, 100, 64)
-    # kde_my = FFTKDE(bw=0.2).fit(data)
-    # kde_my.evaluate(grid_custom)
-
-    scale_h = 0.15
-    scale_v = 0.15  #0.3
-    scale_a = 0.15
-    Xmin = data[:, 0].min() - (data[:, 0].max() - data[:, 0].min()) * scale_h
-    Xmax = data[:, 0].max() + (data[:, 0].max() - data[:, 0].min()) * scale_h
-    Ymin = data[:, 1].min() - (data[:, 1].max() - data[:, 1].min()) * scale_v
-    Ymax = data[:, 1].max() + (data[:, 1].max() - data[:, 1].min()) * scale_v
-    Zmin = data[:, 2].min() - (data[:, 2].max() - data[:, 2].min()) * scale_a
-    Zmax = data[:, 2].max() + (data[:, 2].max() - data[:, 2].min()) * scale_a
-
-    datarange = (Xmin, Xmax, Ymin, Ymax, Zmin, Zmax)
-
-    grid_points_x = np.linspace(Xmin, Xmax, num = grid_points)
-    grid_points_y = np.linspace(Ymin, Ymax, num = grid_points)
-    grid_points_z = np.linspace(Zmin, Zmax, num = grid_points)
-
-    X, Y, Z = np.mgrid[Xmin:Xmax:grid_points*1j, Ymin:Ymax:grid_points*1j, Zmin:Zmax:grid_points*1j]  # capital letter Z = traditional kde
-    positions = np.vstack([ X.ravel(), Y.ravel(), Z.ravel() ])
-    kernel = stats.gaussian_kde(data.T, bw_method=0.1)
-    den = np.reshape(kernel(positions).T, X.shape)  #  density   scipy green
-    # print("3: obtained traditional kde")
-
-    # # start_findmidval = time.time()
-    # mat_scipy, critical_kdeval_scipy = bisectionSearch(den, level, error_level)   # int matrix, scalar
-    # # end_findmidval = time.time()
-    # grids_in_cregion = int(np.around(np.sum(mat_scipy)))  # number of grids in confidence region, total grids = grid_points^2
-
-    return datarange, X, Y, Z, den
-
 #------------------------------------------------------TO DO-------------------------------
 #------------------------------------------------------training file and component --------
 #DATASET1 #train, keep same for each test file
-all_files = glob.glob("dataset/trajectory_linear/train.txt")  #training
-agent1_files = glob.glob("dataset/trajectory_linear/agent1.txt")  #agent1
-agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt")  #agent2
+# all_files = glob.glob("dataset/trajectory_linear/train.txt") 
+#all_files2 = glob.glob("dataset/trajectory_linear/val/testgt*.txt") 
+#all_files2 = glob.glob("dataset/trajectory_linear/val/testdisrupt*.txt")
+# all_files2 = glob.glob("dataset/trajectory_linear/val/testmusk*.txt")
+# all_files2 = glob.glob("dataset/trajectory_linear/val/testpointmusk*.txt")
+# xt = 25
+# yt = 25
+# zt = 9
 #DATASET2
 #all_files = glob.glob("dataset/trajectory_vertical/train.txt")
 #all_files2 = glob.glob("dataset/trajectory_vertical/val/testgt*.txt")
@@ -64,28 +34,29 @@ agent2_files = glob.glob("dataset/trajectory_linear/agent2.txt")  #agent2
 # yt = 25
 # zt = 9
 #DATASET3
-# all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
-# agent1_files = glob.glob("dataset/tajectory_real_smooth/agent1.txt")  #agent1
-# agent2_files = glob.glob("dataset/tajectory_real_smooth/agent2.txt")  #agent2
+#all_files = glob.glob("dataset/trajectory_real_smooth/train.txt")
 # all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testgt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testdisrupt*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testmusk*.txt")
 #all_files2 = glob.glob("dataset/trajectory_real_smooth/val/testpointmusk*.txt")
-# xt = 0.15
-# yt = 0.15
-# zt = 0.15
+xt = 0.15
+yt = 0.15
+zt = 0.15
+#DATASET4
+# all_files = glob.glob("dataset/cmu/train.txt")
+# all_files2 = glob.glob("dataset/cmu/val/testgt*.txt")
 #DATASET5
 day = 1
 filename = 'dataset/cmu_original/7day' + str(day) + 'train.txt'
 all_files = glob.glob(filename)
 filename = 'dataset/cmu_original/7days' + str(day) + '/val/testgt*.txt'
 all_files2 = glob.glob(filename)
-past = 12
-prediction = 240
-train = 0
-sep_dis_min = 0.5 #change it
+past = 24
+prediction = 120
+train = 1
 
-n_components = 300
+
+n_components = 150
 filename = '7daywights' + str(day) + str(n_components) + '.npy'
 saveweights = filename
 filename = '7daymeans' + str(day) + str(n_components) + '.npy'
@@ -95,10 +66,8 @@ savecovariances = filename
 loadweights = '7daywights' + str(day) + str(n_components) + '.npy'
 loadmeans = '7daymeans' + str(day) + str(n_components) + '.npy'
 loadcovariances = '7daycovariances' + str(day) + str(n_components) + '.npy'
-
 #------------------------------------------------------TO DO-------------------------------
 #---------------------------------------------------do not change----------------------------
-#-----------------------------------------training section--------------------------------
 if train:
     t0 = time.time()
     data = []
@@ -164,16 +133,15 @@ else:
         means=means,
         covariances=covariances,
         random_state=random_state)
-#------------------------------trajectory prediction section--------------------------------------------------
+
 data = []
 t0 = time.time()
 #all_files = glob.glob("trajectory_real/val_smooth/testpointmusk*.txt")
 test_trajectory = []
 trajectory1 = []
 #print(all_files2)
-for i in range(1):
-    path1 = all_files2[i]  #F1
-    with open(path1, "r") as f:
+for path in all_files2:
+    with open(path, "r") as f:
         for line in f:
             line = line.strip().split('\t')
             if(line[0] == "new"):
@@ -192,136 +160,107 @@ for i in range(1):
             else:
                 line = [float(i) for i in line[1:]]
                 trajectory1.append(line)
-    test_trajectory.append(trajectory1)
-    agent1= np.array(test_trajectory)
-    old_shape = agent1.shape
-    agent1 = agent1.reshape(old_shape[0],old_shape[1] * old_shape[2])
-    random_state = check_random_state(0)
-    sample_observed=agent1[0:3*past]
-    true_traj1 = agent1[3*past:3*past + 3*prediction]
-    true_traj1 = true_traj1.T.reshape(prediction,3)
-    conditional_gmm = gmm.condition(list(range(3*past)), sample_observed)
-    F1 = conditional_gmm.sample(1000)
-    for j in range(i+1, len(all_files2)): #F2
-        test_trajectory = []
-        trajectory1 = []
-        path2 = all_files2[j]
-        with open(path1, "r") as f:
-            for line in f:
-                line = line.strip().split('\t')
-                if(line[0] == "new"):
-                    if len(trajectory1) == past + prediction:
-                        test_trajectory.append(trajectory1)
-                    # else:
-                    #     for i in range(20-len(trajectory1)):
-                    #         trajectory1.append([0, 0, 0])
-                    #     test_trajectory.append(trajectory1)
-                    trajectory1 = []
-                    line1 = [float(i) for i in line[1:4]]
-                    line2 = [float(i) for i in line[4:]]
-                    line2.append(0)
-                    trajectory1.append(line1)
-                    trajectory1.append(line2)
-                else:
-                    line = [float(i) for i in line[1:]]
-                    trajectory1.append(line)
-        test_trajectory.append(trajectory1)
-        agent2= np.array(test_trajectory)
-        old_shape = agent2.shape
-        agent2 = agent2.reshape(old_shape[0],old_shape[1] * old_shape[2])
-        random_state = check_random_state(0)
-        sample_observed=agent2[0:3*past]
-        true_traj2 = agent2[3*past:3*past + 3*prediction]
-        true_traj2 = true_traj2.T.reshape(prediction,3)
-        crt = []
-        for time in range(240):
-            diff = (true_traj2[time,:] - true_traj1[time,:])**2
-            if np.sqrt(np.sum(diff)) < sep_dis_min:
-                crt.append(1)
-            else:
-                crt.append(2)
-        conditional_gmm = gmm.condition(list(range(3*past)), sample_observed)
-        F2 = conditional_gmm.sample(1000)
+test_trajectory.append(trajectory1)
+dx = []
+dy = []
 
-#------------------------------KDE section--------------------------------------------------
-        cr = []
-        for time in range(240):
-            f1t0 = F1[:, time*3:time*3 + 3]  # 100000by3
-            f2t0 = F2[:, time*3:time*3 + 3]  # 1000by3
+dz = []
+ade = []
+fde = []
+adebystep = []
+X_test= np.array(test_trajectory)
+print('number of test' + str(len(X_test)))
+old_shape = X_test.shape
+X_test = X_test.reshape(old_shape[0],old_shape[1] * old_shape[2])
+random_state = check_random_state(0)
+miss = 0
+for i in range(len(X_test)):
+    sample_observed=X_test[i][0:3*past]
     
-            dr = f1t0 - f2t0
+    true_traj= X_test[i][3*past:3*past + 3*prediction]
+    
+    conditional_gmm = gmm.condition(list(range(3*past)), sample_observed)
+    samples_prediction = conditional_gmm.sample(5)
+    
+    gt = X_test[i][3*past:3*past + 3*prediction]
+    obs_trajp = sample_observed
+    pred_traj_gtp = gt
+    ade1 = 1000
+    fde1 = 1000
+    for x in range(5):
+        adet = []
+        pred_traj_fake = samples_prediction[x]
         
+        obs_trajp = sample_observed.T.reshape(past,3)
+        #print(obs_trajp)
+        pred_traj_gtp = gt.T.reshape(prediction,3)
+        #print(pred_traj_gtp)
+        pred_traj_fake = pred_traj_fake.T.reshape(prediction,3)
+        #print(pred_traj_fake)
         
-            n_ds = f1t0.shape[0]
-        
-            
-        
-        
-            grid_points = 20
-        
-        
-        
-            # kde
-            datarange, X1, Y1, Z1, den = myKDE(dr, grid_points)  # kde for random vector dr
-        
-            xgrid, ygrid, zgrid = np.mgrid[datarange[0]:datarange[1]:grid_points * 1j, datarange[2]:datarange[3]:grid_points * 1j, datarange[4]:datarange[5]:grid_points * 1j]
-            # xgrid = xgrid.flatten()
-            # ygrid = ygrid.flatten()
-            grid_points_x = np.linspace(datarange[0], datarange[1], num=grid_points)
-            grid_points_y = np.linspace(datarange[2], datarange[3], num=grid_points)
-            grid_points_z = np.linspace(datarange[4], datarange[5], num=grid_points)
-        
-        
-        
-        
-        
-        
-        
-            # collision prob kde
-            mat_bin = np.zeros((grid_points, grid_points, grid_points))
-            for i in range(0,grid_points):
-                for j in range(0,grid_points):
-                    for k in range(0,grid_points):
-                        if (grid_points_x[i] ** 2 + grid_points_y[j]** 2 + grid_points_z[k]** 2) < sep_dis_min**2:
-                            mat_bin[i][j] = 1
-        
-            mat_select = np.multiply(den, mat_bin)
-            prob_kde = np.sum(mat_select) * 1.0 / np.sum(den)
-            print("prob of instant collision calc by KDE", time, ":" ,prob_kde)    # 0.14
-            cr.append(prob_kde)
-        
-        
-        
-        
-        
-            # Monte carlo calculate probability of collision      instant probability
-            cnt = 0
-            for i in range(n_ds):
-                if (dr[i,0]**2 + dr[i,1]**2 + dr[i,2]**2) <= sep_dis_min**2:
-                    cnt = cnt + 1
-        
-            prob_mc = (cnt*1.0)/n_ds
-            print("prob of instant collision calc by MC", time , ":",prob_mc)  # 0.13
-        indices = np.arange(len(cr))
-        # Create a figure and axis
-        fig, ax = plt.subplots()
+        diff = pred_traj_fake - pred_traj_gtp
+        loss = diff**2
+        loss = np.sqrt(np.sum(loss,1))
+        if np.mean(loss) < ade1:
+            loss1 = loss
+            ade1 = np.mean(loss)
+        diff = (pred_traj_fake[-1,:] - pred_traj_gtp[-1,:])**2
+        if np.sqrt(np.sum(diff)) < fde1:
+            fde1 = np.sqrt(np.sum(diff))
+    ade.append(ade1)
+    fde.append(fde1)
+    adebystep.append(loss1)
 
-        # Plot the values against indices
-        ax.plot(indices, cr, marker='o', linestyle='-', color='b', label='KDE')
-        ax.plot(indices, crt, marker='o', linestyle='-', color='r', label='True')
-        # Set labels and title
-        ax.set_xlabel('time')
-        ax.set_ylabel('collision rate')
-        ax.set_title('collision rate in each time step ' + str(day))
+#adebystep = np.sum(adebystep, 2)
+adebystep2 = np.array(adebystep)
+adebystep = np.sum(adebystep2, 0)
+adebystep = adebystep/len(X_test)
+indices = np.arange(len(adebystep))
+# Create a figure and axis
+fig, ax = plt.subplots()
 
-        # Add grid and legend
-        ax.grid()
-        ax.legend()
+# Plot the values against indices
+ax.plot(indices, adebystep, marker='o', linestyle='-', color='b', label='Values')
 
-        # Show the plot
-        plt.show()
-#----------------------------
+# Set labels and title
+ax.set_xlabel('time')
+ax.set_ylabel('Value')
+ax.set_title('(gmm+transformer)ade in each time step day ' + str(day))
+
+# Add grid and legend
+ax.grid()
+ax.legend()
+
+# Show the plot
+plt.show()
+# fig = plt.figure(figsize=(8, 6))
+# ax = fig.add_subplot(projection='3d')
+# ax.set_title('GMR predict linear landing')
+# ax.set_xlabel('x')
+# ax.set_ylabel('y')
+# ax.set_zlabel('z')
+# for i in range(10):
+# x = obs_trajp.T[0]
+# y = obs_trajp.T[1]
+# z = obs_trajp.T[2]
+# ax.scatter(x,y, z, s = 10, label= "observed trajectory", c = 'red')
+# ax.scatter(pred_traj_gtp.T[0],pred_traj_gtp.T[1], pred_traj_gtp.T[2], s = 10, label= "real trajectory", c = 'orange')
+# ax.scatter(pred_traj_fake.T[0],pred_traj_fake.T[1], pred_traj_fake.T[2], s = 10, label= "predict trajectory", c = 'blue')
+#         #print(pred_traj_fake)
+# ax.plot(x,y, z, c = 'red')
+# ax.plot(pred_traj_gtp.T[0],pred_traj_gtp.T[1], pred_traj_gtp.T[2],  c = 'orange')
+# ax.plot(pred_traj_fake.T[0],pred_traj_fake.T[1], pred_traj_fake.T[2],  c = 'blue')
+# ax.legend()
 
 
 
+print('ade: '+  str(round(np.mean(ade),2)) + '$\pm$' + str(round(np.var(ade)**0.5,2)))
+print('fde: '+ str(round(np.mean(fde),2)) + '$\pm$' + str(round(np.var(fde)**0.5,2)))
+print('generating time:')
+gtime = time.time() - t0
+print(gtime)
+# print('AGT:')
+# print(gtime/(len(X_test)*10))
+print('miss rate:')
+print(miss/(len(X_test)*prediction))
 #-------------------------------------------do not change----------------------------
