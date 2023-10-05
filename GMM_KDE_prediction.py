@@ -80,12 +80,12 @@ filename = 'dataset/cmu_original/7day' + str(day) + 'train.txt'
 all_files = glob.glob(filename)
 filename = 'dataset/cmu_original/7days' + str(day) + '/val/testgt*.txt'
 all_files2 = glob.glob(filename)
-past = 12
+past = 23
 prediction = 120
-train = 0
+train = 1
 sep_dis_min = 1.5 #change it
 
-n_components = 300
+n_components = 150
 filename = '7daywights' + str(day) + str(n_components) + '.npy'
 saveweights = filename
 filename = '7daymeans' + str(day) + str(n_components) + '.npy'
@@ -120,10 +120,10 @@ if train:
                     #     test_trajectory.append(trajectory1)
                     trajectory1 = []
                     line1 = [float(i) for i in line[1:4]]
-                    line2 = [float(i) for i in line[4:]]
-                    line2.append(0)
+                    #line2 = [float(i) for i in line[4:]]
+                    #line2.append(0)
                     trajectory1.append(line1)
-                    trajectory1.append(line2)
+                    #trajectory1.append(line2)
                 else:
                     line = [float(i) for i in line[1:]]
                     trajectory1.append(line)

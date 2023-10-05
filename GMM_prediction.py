@@ -47,25 +47,27 @@ zt = 0.15
 # all_files2 = glob.glob("dataset/cmu/val/testgt*.txt")
 #DATASET5
 day = 1
-filename = 'dataset/cmu_original/7day' + str(day) + 'train.txt'
+#filename = 'dataset/cmu_original/7day' + str(day) + 'train.txt'
+#filename = '7days4train_net.txt'
+filename = 'dataset/cmu_original/7day' + str(day) + 'train_wind.txt'
 all_files = glob.glob(filename)
 filename = 'dataset/cmu_original/7days' + str(day) + '/val/testgt*.txt'
 all_files2 = glob.glob(filename)
-past = 24
+past = 11
 prediction = 120
 train = 1
 
 
-n_components = 150
-filename = '7daywights' + str(day) + str(n_components) + '.npy'
+n_components = 50
+filename = '7dayweights' + str(day) + '-' +str(n_components)+ '-' + str(past) + '_wind.npy'
 saveweights = filename
-filename = '7daymeans' + str(day) + str(n_components) + '.npy'
+filename = '7daymeans' + str(day) + '-' +str(n_components)+ '-' + str(past) +'_wind.npy'
 savemeans = filename
-filename = '7daycovariances' + str(day) + str(n_components) + '.npy'
+filename = '7daycovariances' + str(day) + '-' +str(n_components)+ '-' + str(past) +'_wind.npy'
 savecovariances = filename
-loadweights = '7daywights' + str(day) + str(n_components) + '.npy'
-loadmeans = '7daymeans' + str(day) + str(n_components) + '.npy'
-loadcovariances = '7daycovariances' + str(day) + str(n_components) + '.npy'
+loadweights = '7dayweights' + str(day) + '-' + str(n_components) + str(past) +'.npy'
+loadmeans = '7daymeans' + str(day) + '-' +str(n_components) + str(past) +'.npy'
+loadcovariances = '7daycovariances' +'-' + str(day) + str(n_components) + str(past) +'.npy'
 #------------------------------------------------------TO DO-------------------------------
 #---------------------------------------------------do not change----------------------------
 if train:
@@ -88,11 +90,11 @@ if train:
                     #         trajectory1.append([0, 0, 0])
                     #     test_trajectory.append(trajectory1)
                     trajectory1 = []
-                    line1 = [float(i) for i in line[1:4]]
-                    line2 = [float(i) for i in line[4:]]
-                    line2.append(0)
+                    line1 = [float(i) for i in line[1:]]
+                    #line2 = [float(i) for i in line[4:]]
+                    #line2.append(0)
                     trajectory1.append(line1)
-                    trajectory1.append(line2)
+                    #trajectory1.append(line2)
                 else:
                     line = [float(i) for i in line[1:]]
                     trajectory1.append(line)
@@ -153,10 +155,10 @@ for path in all_files2:
                 #     test_trajectory.append(trajectory1)
                 trajectory1 = []
                 line1 = [float(i) for i in line[1:4]]
-                line2 = [float(i) for i in line[4:]]
-                line2.append(0)
+                #line2 = [float(i) for i in line[4:]]
+                #line2.append(0)
                 trajectory1.append(line1)
-                trajectory1.append(line2)
+                #trajectory1.append(line2)
             else:
                 line = [float(i) for i in line[1:]]
                 trajectory1.append(line)
@@ -215,6 +217,8 @@ for i in range(len(X_test)):
 adebystep2 = np.array(adebystep)
 adebystep = np.sum(adebystep2, 0)
 adebystep = adebystep/len(X_test)
+mean_values = np.mean(adebystep2, axis=0)
+var_values = np.var(adebystep2, axis=0)
 indices = np.arange(len(adebystep))
 # Create a figure and axis
 fig, ax = plt.subplots()
@@ -225,7 +229,7 @@ ax.plot(indices, adebystep, marker='o', linestyle='-', color='b', label='Values'
 # Set labels and title
 ax.set_xlabel('time')
 ax.set_ylabel('Value')
-ax.set_title('(gmm+transformer)ade in each time step day ' + str(day))
+ax.set_title('gmm ade in each time step day ' + str(day))
 
 # Add grid and legend
 ax.grid()

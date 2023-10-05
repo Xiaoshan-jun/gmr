@@ -5,7 +5,8 @@
 agentcount = 0;
 t = 0;
 b = 0.1;
-fileID = fopen('7day1train.txt','w');
+dataskip = 2;
+fileID = fopen('7day3train_wind.txt','w');
 smoothparameter = 0.001;
 past = 11;
 prediction = 120;
@@ -15,7 +16,7 @@ sample = 10;
 %fileID = fopen('val.txt','w');
 for i = 1:5000
     try
-        filename = sprintf('7days1/train/%d.txt', i);
+        filename = sprintf('7days3/train/%d.txt', i);
         T = readtable(filename);
     catch
         continue
@@ -57,7 +58,7 @@ for i = 1:5000
 
     %pick 10 history from full history
     lastframe = length(fullhistoryx) - past - prediction * skip;
-    for l = 1:3:lastframe
+    for l = 1:dataskip:lastframe
         
         %gt
 %         filename = sprintf('val/testgt%d-%d.txt', i,l);
@@ -72,10 +73,8 @@ for i = 1:5000
             else
                 h = 'future';
             end
-           fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, fullhistoryx(l + t),fullhistoryy(l + t),fullhistoryz(l + t));
-        end
-        for t = past + 9 : 10 : past -1 + prediction*skip
-            fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n','past', fullhistoryx(l + t),fullhistoryy(l + t),fullhistoryz(l + t));
+           %fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, fullhistoryx(l + t),fullhistoryy(l + t),fullhistoryz(l + t));
+           fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n',h, fullhistoryx(l + t),fullhistoryy(l + t),fullhistoryz(l + t), fullhistorywx(1 + t), fullhistorywy(1 + t));
         end
         for t = past + skip - 1 : skip : past - 1 + prediction*skip
             if t == 0
@@ -85,7 +84,7 @@ for i = 1:5000
             else
                 h = 'future';
             end
-           fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, fullhistoryx(l + t), fullhistoryy(l + t), fullhistoryz(l + t));
+           fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n',h, fullhistoryx(l + t),fullhistoryy(l + t),fullhistoryz(l + t), fullhistorywx(1 + t), fullhistorywy(1 + t));
         end
         %disrupt
 %         for d = 1:10

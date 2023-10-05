@@ -69,7 +69,7 @@ for i = 1:3089
 %     end
     lastframe = length(fullhistoryx) - past - prediction * skip;
     %pick 10 history from full history
-    for l = 1:1:lastframe
+    for l = 1:10:lastframe
         filename = sprintf('7days1/val/testgt%d.txt', i*10000 + l);
         fileID = fopen(filename,'w');
         historyx = [];
@@ -88,9 +88,7 @@ for i = 1:3089
             end
            fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n',h, fullhistoryx(l + t),fullhistoryy(l + t),fullhistoryz(l + t));
         end
-        for t = past + 9 : 10 : past -1 + prediction*skip
-            fprintf(fileID,'%s\t%4.2f\t%4.2f\t%4.2f\n','past', fullhistoryx(l + t),fullhistoryy(l + t),fullhistoryz(l + t));
-        end
+
         for t = past -1 + skip : skip : past -1 + prediction*skip
             if t == 0
                 h = 'new';
